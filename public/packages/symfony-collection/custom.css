@@ -1,0 +1,28 @@
+.collection-elem {
+    border: green solid 3px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.sub-collection-root {
+    padding: 10px;
+}
+
+.sub-collection-elem {
+    border: red solid 3px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.sub-sub-collection-root {
+    padding: 10px;
+}
+
+.sub-sub-collection-elem {
+    border: blue solid 3px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
