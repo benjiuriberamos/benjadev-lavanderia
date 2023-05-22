@@ -92,7 +92,7 @@ class ProductController extends CompletePageController
             ->removable()
             //->rules('required')
             ->help('Seleccione las imagenes. Tamaño recomendado 740x900.');
-        $form->select('provider_id', __('Proveedor'))->options(Provider::all()->pluck('name', 'id'));
+        $form->select('provider_id', __('Proveedor'))->options(Provider::all()->pluck('title', 'id'));
 
         $form->saving(function (Form $form) {
 			$form->slug = Str::slug($form->title, '-');
