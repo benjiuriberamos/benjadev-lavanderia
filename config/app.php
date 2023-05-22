@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost:8002http://localhost/storage/images/b1nosotros-img-2.png'),
+    'url' => env('APP_URL', 'http://localhost:8000/storage/images/b1nosotros-img-2.png'),
 
     'asset_url' => env('ASSET_URL', null),
 

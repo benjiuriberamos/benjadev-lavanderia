@@ -17,8 +17,17 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('home');
 
     //Dashboard
-    //$router->resource('multiimagen', ProductController::class);
+    $router->resource('multiimagen', ProductController::class);
 
     //Core
+    $router->resource('products', ProductController::class);
+    $router->resource('providers', ProviderController::class);
+
+    //Setting pages
+    // $router->resource('settings', PageSettingsController::class);
+    // $router->resource('home', PageHomeController::class);
+    // $router->resource('about', PageAboutController::class);
+    // $router->resource('contact', PageContactController::class);
+
 
 });
