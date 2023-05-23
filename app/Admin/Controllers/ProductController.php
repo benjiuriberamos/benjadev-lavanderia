@@ -45,7 +45,12 @@ class ProductController extends CompletePageController
         $grid->filter(function ($filter) {
             $filter->between('created_at', 'Created Time')->datetime();
         });
+        
+        //Settings
         $grid->perPages([10, 20, 30, 40, 50]);
+        $grid->actions(function ($actions) {
+            $actions->disableView();
+        });
 
         return $grid;
     }
@@ -68,8 +73,6 @@ class ProductController extends CompletePageController
         $show->field('title', 'Nombre');
         $show->field('descripcion', 'Descripción');
         $show->image('image', 'Imagen');
-        // $show->field('created_at', __('Created at'));
-        // $show->field('updated_at', __('Updated at'));
 
         return $show;
     }
@@ -85,12 +88,9 @@ class ProductController extends CompletePageController
 
         $form->text('title', __('Nombre'));
         $form->text('slug', __('Slug'))->help('Se autogenera con el título.');
-        // $form->text('sku', __('Sku'));
-        $form->textarea('description', __('Descripción'))
-            ;
+        $form->textarea('description', __('Descripción'));
         $form->image('image', __('Imagen principal'))
             ->removable()
-            //->rules('required')
             ->help('Seleccione las imagenes. Tamaño recomendado 740x900.');
         $form->select('provider_id', __('Proveedor'))->options(Provider::all()->pluck('title', 'id'));
 

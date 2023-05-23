@@ -15,6 +15,9 @@ class CreateInputsTable extends Migration
     {
         Schema::create('inputs', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->date('date_input')->nullable();
+            $table->unsignedInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('admin_users');
             $table->timestamps();
         });
     }

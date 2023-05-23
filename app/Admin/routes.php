@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Routing\Router;
-// use App\Admin\Controllers\BrandController;
-// use App\Admin\Controllers\ProductController;
 
 Admin::routes();
 
@@ -22,12 +20,8 @@ Route::group([
     //Core
     $router->resource('products', ProductController::class);
     $router->resource('providers', ProviderController::class);
-
-    //Setting pages
-    // $router->resource('settings', PageSettingsController::class);
-    // $router->resource('home', PageHomeController::class);
-    // $router->resource('about', PageAboutController::class);
-    // $router->resource('contact', PageContactController::class);
-
+    $router->resource('locals', LocalController::class);
+    $router->resource('inputs', InputController::class);
+    $router->resource('outputs', OutputController::class);
 
 });

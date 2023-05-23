@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Member extends Model
+class Input extends Model
 {
-
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'members';
+    protected $table = 'inputs';
 
     /**
      * The attributes that are mass assignable.
@@ -20,13 +19,8 @@ class Member extends Model
      * @var array
      */
     protected $fillable = [
-        'active',
-        'name',
-        'charge',
-        'image',
-        'facebook',
-        'instagram',
-        'twiter',
+        'date_input',
+        'user_id',
     ];
 
     // protected $casts = [
@@ -34,11 +28,11 @@ class Member extends Model
     // ];
 
     /**
-     * Get the brand that owns the product.
+     * Get the input_details for the input.
      */
-    public function home()
+    public function inputDetails()
     {
-        return $this->belongsTo('App\Models\PageAbout', 'about_id');
+        return $this->hasMany('App\Models\InputDetail', 'input_id');
     }
 
 }

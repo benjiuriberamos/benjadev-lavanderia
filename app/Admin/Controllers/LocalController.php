@@ -2,22 +2,21 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Provider;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use App\Models\Local;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
-class ProviderController extends CompletePageController
+class LocalController extends CompletePageController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = 'Proveedores de productos';
+    protected $title = 'Locales';
 
     /**
      * Make a grid builder.
@@ -26,15 +25,11 @@ class ProviderController extends CompletePageController
      */
     protected function grid()
     {
-        $grid = new Grid(new Provider);
+        $grid = new Grid(new Local);
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', __('Nombre'));
-        $grid->column('image', __('Imagen'))->display(function ($name) {
-                $url = $name ? Storage::url($name) : '/assets/img/default_product.png';
-                return "<img src=' $url' width='50'></img>";
-        });
-        
+
         //Settings
         $grid->perPages([10, 20, 30, 40, 50]);
         $grid->actions(function ($actions) {
@@ -52,15 +47,10 @@ class ProviderController extends CompletePageController
      */
     protected function detail($id)
     {
-        $show = new Show(Provider::findOrFail($id));
+        $show = new Show(Local::findOrFail($id));
 
         $show->field('id', __('ID'));
         $show->field('title', 'Nombre');
-        $show->field('slug', 'Slug');
-        $show->image('image', 'Imagen');
-        // $show->field('created_at', __('Created at'));
-        // $show->field('updated_at', __('Updated at'));
-
         return $show;
     }
 
@@ -71,14 +61,10 @@ class ProviderController extends CompletePageController
      */
     protected function form()
     {
-        $form = new Form(new Provider);
+        $form = new Form(new Local);
 
         $form->text('title', __('Nombre'));
-        $form->text('slug', __('Slug'))
-            ->help('Se autogenera con el título.');
-        $form->image('image', __('Imagen principal'))
-            ->removable()
-            ->help('Seleccione las imagen.');
+        $form->text('slug', __('Slug'));
 
         $form->saving(function (Form $form) {
 			$form->slug = Str::slug($form->title, '-');
