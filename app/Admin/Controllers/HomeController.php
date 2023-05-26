@@ -15,8 +15,9 @@ class HomeController extends Controller
     public function index(Content $content)
     {
         //pedido del cliente
+        //dd(!Admin::user()->isRole('administrator'));exit;
         if (!Admin::user()->isRole('administrator')) {
-            return redirect()->route('admin.outputs');
+            return redirect()->route('admin.outputs.index');
         }
 
         //Contenido del dashboard
