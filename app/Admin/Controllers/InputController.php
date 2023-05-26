@@ -7,6 +7,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Input;
 use App\Models\Product;
+use App\Admin\Extensions\Excel\InputExporter;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
 class InputController extends CompletePageController
@@ -28,13 +29,10 @@ class InputController extends CompletePageController
         $grid = new Grid(new Input);
 
         $grid->column('id', __('ID'))->sortable();
-        $grid->column('date_input', __('Fecha de entrada'));
-
-        //Settings
-        $grid->perPages([10, 20, 30, 40, 50]);
-        $grid->actions(function ($actions) {
-            $actions->disableView();
-        });
+        $grid->column('date_input', __('Fecha de entrada'))->filter('range', 'date');
+        $grid->column('factory', __('Empresa'))->filter('like');
+        $grid->disableExport(false);
+        $grid->exporter(new InputExporter());
 
         return $grid;
     }
@@ -62,10 +60,11 @@ class InputController extends CompletePageController
     {
         $form = new Form(new Input);
         $form->date('date_input', __('Date'))->format('YYYY-MM-DD');
+        $form->text('factory', __('Empresa'))->rules('required');
         $form->hasMany('inputDetails', 'Productos', function ($form) {
             $form->select('product_id', __('Producto'))->options(Product::all()->pluck('title', 'id'));
             $form->number('quantity', 'Cantidad');
-            $form->number('price', 'Precio');
+            //$form->number('price', 'Precio');
         })->mode('table');
 
         $form->saving(function (Form $form) {

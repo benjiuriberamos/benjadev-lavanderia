@@ -19,7 +19,7 @@ class CreateInputDetailTable extends Migration
             $table->string('price')->nullable();
             
             $table->unsignedBigInteger('input_id')->nullable();
-            $table->foreign('input_id')->references('id')->on('inputs');
+            $table->foreign('input_id')->references('id')->on('inputs')->onDelete('cascade');
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products');
             $table->timestamps();

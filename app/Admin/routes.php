@@ -23,5 +23,6 @@ Route::group([
     $router->resource('locals', LocalController::class);
     $router->resource('inputs', InputController::class);
     $router->resource('outputs', OutputController::class);
+    $router->resource('subusers', SubuserController::class);
 
 });

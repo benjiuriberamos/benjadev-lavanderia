@@ -7,6 +7,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Product;
+use App\Admin\Extensions\Excel\OutputExporter;
 use Illuminate\Database\Eloquent\Builder;
 use Encore\Admin\Auth\Database\Administrator;
 use App\Admin\Controllers\Subcore\CompletePageController;
@@ -33,10 +34,6 @@ class OutputController extends CompletePageController
         $grid->column('date_output', __('Fecha'));
 
         //Settings
-        $grid->perPages([10, 20, 30, 40, 50]);
-        $grid->actions(function ($actions) {
-            $actions->disableView();
-        });
 
         return $grid;
     }
@@ -76,7 +73,7 @@ class OutputController extends CompletePageController
         $form->hasMany('outputDetails', 'Productos', function ($form) {
             $form->select('product_id', __('Producto'))->options(Product::all()->pluck('title', 'id'));
             $form->number('quantity', 'Cantidad');
-            $form->number('price', 'Precio');
+            //$form->number('price', 'Precio');
         })->mode('table');
 
         if (!auth()->user()->isRole('administrator') || !auth()->user()->isRole('usuario-administrador')) {

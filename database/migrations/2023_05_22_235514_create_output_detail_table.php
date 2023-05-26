@@ -19,7 +19,7 @@ class CreateOutputDetailTable extends Migration
             $table->string('price')->nullable();
             
             $table->unsignedBigInteger('output_id')->nullable();
-            $table->foreign('output_id')->references('id')->on('outputs');
+            $table->foreign('output_id')->references('id')->on('outputs')->onDelete('cascade');
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products');
             $table->timestamps();

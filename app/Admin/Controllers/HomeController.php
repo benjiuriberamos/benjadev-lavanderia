@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function index(Content $content)
     {
         //pedido del cliente
-        if (Admin::user()->isRole('usuario')) {
+        if (!Admin::user()->isRole('administrator')) {
             return redirect()->route('admin.settings.edit', ['setting' => 1]);
         }
 

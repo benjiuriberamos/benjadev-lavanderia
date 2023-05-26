@@ -36,6 +36,7 @@ class ProductController extends CompletePageController
                 $url = $name ? Storage::url($name) : '/assets/img/default_product.png';
                 return "<img src=' $url' width='50'></img>";
             });
+        $grid->column('stock', __('Stock'));
         $grid->column('provider.name', __('Proveedor'));
 
         // $grid->column('created_at', __('Created at'));

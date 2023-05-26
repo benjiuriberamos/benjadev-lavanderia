@@ -1,5 +1,6 @@
 <?php
 use Encore\Admin\Form;
+use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Widgets\Navbar;
 use App\Admin\Extensions\Text;
@@ -87,4 +88,46 @@ Admin::navbar(function (Navbar $navbar) {
 
     // $navbar->right($html);
 
+});
+
+
+
+
+Grid::init(function (Grid $grid) {
+
+    //$grid->disableActions();
+
+    //$grid->disablePagination();
+
+    //$grid->disableCreateButton();
+
+    // $grid->disableFilter();
+
+    //$grid->disableRowSelector();
+
+    $grid->disableColumnSelector();
+    $grid->perPages([10, 20, 30, 40, 50]);
+
+    //$grid->disableTools();
+
+    $grid->disableExport();
+
+    $grid->actions(function (Grid\Displayers\Actions $actions) {
+        $actions->disableView();
+    });
+});
+
+Form::init(function (Form $form) {
+
+    $form->disableEditingCheck();
+
+    $form->disableCreatingCheck();
+
+    $form->disableViewCheck();
+
+    $form->tools(function (Form\Tools $tools) {
+        $tools->disableDelete();
+        $tools->disableView();
+        $tools->disableList();
+    });
 });
