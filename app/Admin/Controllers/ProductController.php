@@ -37,7 +37,7 @@ class ProductController extends CompletePageController
                 return "<img src=' $url' width='50'></img>";
             });
         $grid->column('stock', __('Stock'));
-        $grid->column('provider.name', __('Proveedor'));
+        $grid->column('provider.title', __('Proveedor'));
 
         // $grid->column('created_at', __('Created at'));
         // $grid->column('updated_at', __('Updated at'));
