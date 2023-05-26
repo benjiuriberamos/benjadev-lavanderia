@@ -7,6 +7,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Product;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Encore\Admin\Auth\Database\Administrator;
@@ -30,6 +31,12 @@ class OutputController extends CompletePageController
     protected function grid()
     {
         $grid = new Grid(new Output);
+
+        if (Admin::user()->isRole('usuario-subalmacen')) {
+            $user_id = Admin::user()->id;
+            $grid->model()->where('user_id', $user_id);
+        }
+
         $grid->model()->with('user');
         $grid->model()->with('user.subuser.local');
 
