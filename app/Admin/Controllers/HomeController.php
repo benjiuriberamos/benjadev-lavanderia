@@ -16,7 +16,7 @@ class HomeController extends Controller
     {
         //pedido del cliente
         if (!Admin::user()->isRole('administrator')) {
-            return redirect()->route('admin.settings.edit', ['setting' => 1]);
+            return redirect()->route('admin.outputs');
         }
 
         //Contenido del dashboard

@@ -44,6 +44,13 @@ class SubuserController extends CompletePageController
         $grid->column('subuser.local', __('Local'))->display(function ($array) {
             return isset($array["title"]) ? $array["title"] : '';
         });
+        $grid->column('roles', 'Roles')->display(function ($roles) {
+            $html = '';
+            foreach ($roles as $rol) {
+                $html .= "<span class='label label-success'>{$rol['name']}</span>";
+            }
+            return $html;
+        });
 
         return $grid;
     }
@@ -77,6 +84,7 @@ class SubuserController extends CompletePageController
         $form->multipleSelect('roles', __('Rol'))
             ->options(Role::whereNotIn('slug', ['administrator', 'usuario-administrador'])->pluck('name', 'id'))
             ->rules('required');
+        
 
         $form->saving(function (Form $form) {
 			$form->model()->subuser()->user_id = $form->model()->user_id;

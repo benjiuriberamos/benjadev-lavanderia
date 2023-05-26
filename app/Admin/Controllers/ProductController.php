@@ -38,6 +38,7 @@ class ProductController extends CompletePageController
             });
         $grid->column('stock', __('Stock'))->filter('like');
         $grid->column('provider.title', __('Proveedor'));
+        
 
         // $grid->column('created_at', __('Created at'));
         // $grid->column('updated_at', __('Updated at'));
@@ -46,6 +47,8 @@ class ProductController extends CompletePageController
         $grid->filter(function ($filter) {
             $filter->between('created_at', 'Created Time')->datetime();
         });
+
+        
         
         //Settings
         $grid->perPages([10, 20, 30, 40, 50]);

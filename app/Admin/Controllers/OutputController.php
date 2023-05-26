@@ -7,9 +7,10 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Product;
-use App\Admin\Extensions\Excel\OutputExporter;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Encore\Admin\Auth\Database\Administrator;
+use App\Admin\Extensions\Excel\OutputExporter;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
 class OutputController extends CompletePageController
@@ -64,6 +65,15 @@ class OutputController extends CompletePageController
      */
     protected function form()
     {
+        $productos = DB::table('products')->select('id', 'title', 'stock')->get();
+        $productos = $productos->map(function ($e) {
+            return [
+                'id' => $e->id,
+                'title' => $e->title . ' | STOCK[' . $e->stock . ']',
+            ];
+        })->toArray();
+        $productos = array_column($productos, 'title', 'id');
+        
         $form = new Form(new Output);
         $form->date('date_output', __('Date'))->format('YYYY-MM-DD');
 
@@ -74,11 +84,16 @@ class OutputController extends CompletePageController
             })->get()->pluck('name', 'id'));
         }
 
-        $form->hasMany('outputDetails', 'Productos', function ($form) {
-            $form->select('product_id', __('Producto'))->options(Product::all()->pluck('title', 'id'));
+        $form->hasMany('outputDetails', 'Productos', function ($form) use ($productos) {
+            $form->select('product_id', __('Producto'))->options($productos);
             $form->number('quantity', 'Cantidad');
             //$form->number('price', 'Precio');
         })->mode('table');
+
+        //dd(Product::all()->pluck('title', 'id'));
+        
+        // dd($productos);
+        // exit;
 
         if (!auth()->user()->isRole('administrator') || !auth()->user()->isRole('usuario-administrador')) {
             $form->saving(function (Form $form) {
