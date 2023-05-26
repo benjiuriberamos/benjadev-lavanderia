@@ -2,14 +2,15 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Local;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Subuser;
-use App\Models\Local;
-use Encore\Admin\Auth\Database\Role;
 use App\User as Administrator;
+use Encore\Admin\Auth\Database\Role;
 // use Encore\Admin\Auth\Database\Administrator;
+use Illuminate\Support\Facades\Hash;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
 class SubuserController extends CompletePageController
@@ -79,6 +80,9 @@ class SubuserController extends CompletePageController
 
         $form->saving(function (Form $form) {
 			$form->model()->subuser()->user_id = $form->model()->user_id;
+            if ($form->password && $form->model()->password != $form->password) {
+                $form->password = Hash::make($form->password);
+            }
 		});
 
         return $form;
