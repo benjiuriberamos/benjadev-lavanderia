@@ -7,6 +7,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Subuser;
 use App\Models\Local;
+use Encore\Admin\Auth\Database\Role;
 use App\User as Administrator;
 // use Encore\Admin\Auth\Database\Administrator;
 use App\Admin\Controllers\Subcore\CompletePageController;
@@ -71,6 +72,9 @@ class SubuserController extends CompletePageController
         $form->text('name', __('Nombre'));
         $form->password('password', __('Password'));
         $form->select('subuser.local_id', __('Local'))->options(Local::all()->pluck('title', 'id'))
+            ->rules('required');
+        $form->multipleSelect('roles', __('Rol'))
+            ->options(Role::whereNotIn('slug', ['administrator', 'usuario-administrador'])->pluck('name', 'id'))
             ->rules('required');
 
         $form->saving(function (Form $form) {

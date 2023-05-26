@@ -31,12 +31,12 @@ class ProductController extends CompletePageController
         $grid = new Grid(new Product);
 
         $grid->column('id', __('ID'))->sortable();
-        $grid->column('title', __('Nombre'));
+        $grid->column('title', __('Nombre'))->filter('like');
         $grid->column('image', __('Imagen'))->display(function ($name) {
                 $url = $name ? Storage::url($name) : '/assets/img/default_product.png';
                 return "<img src=' $url' width='50'></img>";
             });
-        $grid->column('stock', __('Stock'));
+        $grid->column('stock', __('Stock'))->filter('like');
         $grid->column('provider.title', __('Proveedor'));
 
         // $grid->column('created_at', __('Created at'));
