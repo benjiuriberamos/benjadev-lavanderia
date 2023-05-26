@@ -24,4 +24,20 @@ class OutputDetail extends Model
         'input_id',
         'product_id',
     ];
+
+    /**
+     * Get the product associated with the detail.
+     */
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Product');
+    }
+
+    /**
+     * Get the product associated with the detail.
+     */
+    public function output()
+    {
+        return $this->belongsTo('App\Models\Output');
+    }
 }

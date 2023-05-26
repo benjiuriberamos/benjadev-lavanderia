@@ -29,11 +29,15 @@ class OutputController extends CompletePageController
     protected function grid()
     {
         $grid = new Grid(new Output);
+        $grid->model()->with('user');
+        $grid->model()->with('user.subuser.local');
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('date_output', __('Fecha'));
-
-        //Settings
+        $grid->column('user.name', __('Usuario'));
+        $grid->column('user.subuser', __('Local'))->display(function ($array) {
+            return isset($array['local']["title"]) ? $array['local']["title"] : '';
+        });
 
         return $grid;
     }

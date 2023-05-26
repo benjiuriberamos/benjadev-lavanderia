@@ -16,7 +16,7 @@ class CreateAdminSubusersTable extends Migration
         Schema::create('admin_subusers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('admin_users');
+            $table->foreign('user_id')->references('id')->on('admin_users')->onDelete('cascade');
             $table->unsignedBigInteger('local_id')->nullable();
             $table->foreign('local_id')->references('id')->on('locals');
             $table->timestamps();

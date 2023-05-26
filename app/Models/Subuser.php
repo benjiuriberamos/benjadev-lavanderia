@@ -32,7 +32,7 @@ class Subuser extends Model
      */
     public function user()
     {
-        return $this->hasOne('Encore\Admin\Auth\Database\Administrator');
+        return $this->belongsTo('Encore\Admin\Auth\Database\Administrator');
     }
 
     /**
@@ -40,7 +40,7 @@ class Subuser extends Model
      */
     public function local()
     {
-        return $this->hasOne('App\Local');
+        return $this->belongsTo('App\Models\Local');
     }
 
     /**

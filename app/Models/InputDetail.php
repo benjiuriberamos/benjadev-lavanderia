@@ -24,4 +24,20 @@ class InputDetail extends Model
         'input_id',
         'product_id',
     ];
+
+    /**
+     * Get the product associated with the detail.
+     */
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Product');
+    }
+
+    /**
+     * Get the input associated with the detail.
+     */
+    public function input()
+    {
+        return $this->belongsTo('App\Models\Input');
+    }
 }

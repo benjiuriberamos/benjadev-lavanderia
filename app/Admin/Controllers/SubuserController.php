@@ -6,6 +6,9 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Models\Subuser;
+use App\Models\Local;
+use App\User as Administrator;
+// use Encore\Admin\Auth\Database\Administrator;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
 class SubuserController extends CompletePageController
@@ -24,15 +27,20 @@ class SubuserController extends CompletePageController
      */
     protected function grid()
     {
-        $grid = new Grid(new Subuser);
+        $grid = new Grid(new Administrator);
+
+        $grid->model()->whereDoesntHave('roles', function ($query) {
+            $query->where('slug', 'administrator')
+                ->orWhere('slug', 'usuario-administrador')
+                ;
+        });
+        $grid->model()->with('subuser.local');
 
         $grid->column('id', __('ID'))->sortable();
-        $grid->column('title', __('Nombre'));
-
-        //Settings
-        $grid->perPages([10, 20, 30, 40, 50]);
-        $grid->actions(function ($actions) {
-            $actions->disableView();
+        $grid->column('name', __('Nombre'));
+        $grid->column('username', __('Username'));
+        $grid->column('subuser.local', __('Local'))->display(function ($array) {
+            return isset($array["title"]) ? $array["title"] : '';
         });
 
         return $grid;
@@ -46,7 +54,7 @@ class SubuserController extends CompletePageController
      */
     protected function detail($id)
     {
-        $show = new Show(Subuser::findOrFail($id));
+        $show = new Show(Administrator::findOrFail($id));
         return $show;
     }
 
@@ -57,13 +65,17 @@ class SubuserController extends CompletePageController
      */
     protected function form()
     {
-        $form = new Form(new Subuser);
+        $form = new Form(new Administrator);
 
-        $form->text('user.name', __('Name'));
-        $form->email('user.email', __('Email'));
-        $form->datetime('user.email_verified_at', __('Email verified at'))->default(date('Y-m-d H:i:s'));
-        $form->password('user.password', __('Password'));
-        $form->text('user.remember_token', __('Remember token'));
+        $form->text('username', __('Username'));
+        $form->text('name', __('Nombre'));
+        $form->password('password', __('Password'));
+        $form->select('subuser.local_id', __('Local'))->options(Local::all()->pluck('title', 'id'))
+            ->rules('required');
+
+        $form->saving(function (Form $form) {
+			$form->model()->subuser()->user_id = $form->model()->user_id;
+		});
 
         return $form;
     }

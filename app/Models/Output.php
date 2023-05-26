@@ -34,4 +34,12 @@ class Output extends Model
     {
         return $this->hasMany('App\Models\OutputDetail', 'output_id');
     }
+
+    /**
+     * Get the user associated with the detail.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }
