@@ -82,7 +82,7 @@ class SubuserController extends CompletePageController
         $form->select('subuser.local_id', __('Local'))->options(Local::all()->pluck('title', 'id'))
             ->rules('required');
         $form->multipleSelect('roles', __('Rol'))
-            ->options(Role::whereNotIn('slug', ['administrator', 'usuario-administrador'])->pluck('name', 'id'))
+            ->options(Role::whereNotIn('slug', ['administrator'])->pluck('name', 'id'))
             ->rules('required');
         
 
