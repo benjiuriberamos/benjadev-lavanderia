@@ -24,5 +24,7 @@ Route::group([
     $router->resource('inputs', InputController::class);
     $router->resource('outputs', OutputController::class);
     $router->resource('subusers', SubuserController::class);
-
+    $router->get('reports', 'ReportController@index'::class);
+    $router->get('reports/inputs', 'ReportController@exportInputs'::class)->name('exports.inputs');
+    $router->get('reports/outputs', 'ReportController@exportOutputs'::class)->name('exports.outputs');
 });

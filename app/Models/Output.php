@@ -19,6 +19,7 @@ class Output extends Model
      * @var array
      */
     protected $fillable = [
+        'factory',
         'date_input',
         'user_id',
     ];

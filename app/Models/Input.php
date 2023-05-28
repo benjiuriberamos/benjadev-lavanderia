@@ -19,6 +19,7 @@ class Input extends Model
      * @var array
      */
     protected $fillable = [
+        'factory',
         'date_input',
         'user_id',
     ];
@@ -33,6 +34,14 @@ class Input extends Model
     public function inputDetails()
     {
         return $this->hasMany('App\Models\InputDetail', 'input_id');
+    }
+
+    /**
+     * Get the phone record associated with the user.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
     }
 
 }

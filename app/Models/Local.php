@@ -27,4 +27,12 @@ class Local extends Model
     //     'image_items' => 'json',
     // ];
 
+    /**
+     * Get the subuser that owns the phone.
+     */
+    public function subuser()
+    {
+        return $this->hasOne('App\Models\Subuser');
+    }
+
 }
