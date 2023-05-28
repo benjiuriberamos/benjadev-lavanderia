@@ -19,7 +19,13 @@ class OutputsExport implements FromCollection
         $factory = request()->request->get('factory', '');
 
         $query = new Output();
-        $query = $query->with('user.subuser.local');
+        $query = $query->with([
+            'outputDetails',
+            'outputDetails.product',
+            'user',
+            'user.subuser',
+            'user.subuser.local',
+        ]);
 
         if ($product_id) {
             $query = $query->whereHas('outputDetails', function ($query) use ($product_id) {

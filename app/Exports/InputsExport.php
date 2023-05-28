@@ -19,7 +19,13 @@ class InputsExport implements FromCollection
         $factory = request()->request->get('factory', '');
 
         $query = new Input();
-        //$query = $query->with(['inputDetails', 'user']);
+        $query = $query->with([
+            'inputDetails',
+            'inputDetails.product',
+            'user',
+            'user.subuser',
+            'user.subuser.local',
+        ]);
 
         if ($factory) {
             $query = $query->where('factory', 'LIKE', $factory);
