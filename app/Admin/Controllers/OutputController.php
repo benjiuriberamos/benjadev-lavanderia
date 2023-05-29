@@ -44,6 +44,14 @@ class OutputController extends CompletePageController {
 			return isset($array['local']['title']) ? $array['local']['title'] : '';
 		});
 
+		if (Admin::user()->isRole('usuario-almacen') || Admin::user()->isRole('usuario-subalmacen')) {
+            $grid->actions(function ($actions) {
+                $actions->disableView(false);
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+        }
+
 		return $grid;
 	}
 
@@ -58,7 +66,25 @@ class OutputController extends CompletePageController {
 		$show = new Show(Output::findOrFail($id));
 
 		$show->field('id', __('ID'));
-		$show->field('title', 'Nombre');
+		$show->field('date_output', 'Fecha');
+
+		$show->outputDetails('Detalle salida', function ($output) {
+
+			$output->column('product.title', __('Producto'));
+			$output->quantity(__('Cantidad'));
+
+			$output->disableActions();
+			$output->disableCreateButton();
+			$output->disableFilter();
+			$output->disableRowSelector();
+			$output->disablePagination();
+			$output->actions(function ($actions) {
+                $actions->disableView();
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+
+		});
 
 		return $show;
 	}

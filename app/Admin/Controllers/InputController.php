@@ -2,11 +2,12 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Input;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Models\Input;
 use App\Models\Product;
+use Encore\Admin\Facades\Admin;
 use App\Admin\Extensions\Excel\InputExporter;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
@@ -31,8 +32,14 @@ class InputController extends CompletePageController
         $grid->column('id', __('ID'))->sortable();
         $grid->column('date_input', __('Fecha de entrada'))->filter('range', 'date');
         $grid->column('factory', __('Empresa'))->filter('like');
-        $grid->disableExport(false);
-        $grid->exporter(new InputExporter());
+
+        if (Admin::user()->isRole('usuario-almacen') || Admin::user()->isRole('usuario-subalmacen')) {
+            $grid->actions(function ($actions) {
+                $actions->disableView(false);
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+        }
 
         return $grid;
     }
@@ -48,6 +55,26 @@ class InputController extends CompletePageController
         $show = new Show(Input::findOrFail($id));
 
         $show->field('id', __('ID'));
+		$show->field('date_input', 'Fecha');
+
+		$show->inputDetails('Detalle salida', function ($output) {
+
+			$output->column('product.title', __('Producto'));
+			$output->quantity(__('Cantidad'));
+
+			$output->disableActions();
+			$output->disableCreateButton();
+			$output->disableFilter();
+			$output->disableRowSelector();
+			$output->disablePagination();
+			$output->actions(function ($actions) {
+                $actions->disableView();
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+
+		});
+
         return $show;
     }
 
