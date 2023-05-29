@@ -72,8 +72,14 @@ class InputController extends CompletePageController
                 $actions->disableEdit();
                 $actions->disableDelete();
             });
-
 		});
+
+        $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableEdit();
+                $tools->disableList();
+                $tools->disableDelete();
+        });
 
         return $show;
     }

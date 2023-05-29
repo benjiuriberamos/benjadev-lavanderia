@@ -86,6 +86,13 @@ class OutputController extends CompletePageController {
 
 		});
 
+		$show->panel()
+			->tools(function ($tools) {
+				$tools->disableEdit();
+				$tools->disableList();
+				$tools->disableDelete();
+			});
+			
 		return $show;
 	}
 
