@@ -114,7 +114,9 @@ class OutputController extends CompletePageController {
 		$form = new Form(new Output());
 		$form->date('date_output', __('Date'))->format('YYYY-MM-DD');
 
-		if (auth()->user()->isRole('administrator') || auth()->user()->isRole('usuario-administrador')) {
+		if (auth()->user()->isRole('administrator') ||
+			auth()->user()->isRole('usuario-administrador') ||
+			auth()->user()->isRole('usuario-almacen')) {
 			$form->select('user_id', __('Usuario'))->options(Administrator::whereDoesntHave('roles', function (Builder $query) {
 				$query->where('slug', 'administrator')
 					->orWhere('slug', 'usuario-administrador');
