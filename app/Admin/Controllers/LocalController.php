@@ -2,15 +2,24 @@
 
 namespace App\Admin\Controllers;
 
+use App\User;
+use App\Models\Local;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Models\Local;
+use App\Models\Product;
+use App\Traits\UtilsTrait;
 use Illuminate\Support\Str;
+use App\Models\LocalProducts;
+use Illuminate\Http\Response;
+use Encore\Admin\Layout\Content;
+use Illuminate\Database\Eloquent\Builder;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
 class LocalController extends CompletePageController
 {
+    use UtilsTrait;
+    
     /**
      * Title for current resource.
      *
@@ -29,6 +38,9 @@ class LocalController extends CompletePageController
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', __('Nombre'));
+        $grid->column('not_column', __('Productos'))->display(function () {
+            return '<a href="' . route('admin.locals.products', ['id' => $this->id]) . '" target="_blank">Ver Productos</a>';
+        });
 
         //Settings
         $grid->perPages([10, 20, 30, 40, 50]);
@@ -72,4 +84,59 @@ class LocalController extends CompletePageController
 
         return $form;
     }
+
+    /**
+     * Make a grid builder for locals/{id}/products/.
+     *
+     * @return Grid
+     */
+    public function products(Content $content, $id)
+    {
+
+        return $content
+            ->title($this->title())
+            ->description($this->description['index'] ?? trans('admin.list'))
+            ->body($this->liststock($id));
+    }
+
+    /**
+     * Make a grid builder for /admin/stock.
+     *
+     * @return Grid
+     */
+    public function stockUser(Content $content)
+    {
+        $local_id =  $this->getLocal() ? $this->getLocal()->id : 0;
+        $grid = $this->liststock($local_id);
+        return $content
+            ->title($this->title())
+            ->description($this->description['index'] ?? trans('admin.list'))
+            ->body($grid);
+    }
+
+    private function liststock($id) {
+        $grid = new Grid(new LocalProducts);
+
+        if (!$id 
+            || $this->getUser()->isRole('administrator')
+            || $this->getUser()->isRole('usuario-administrador') ) {
+            $grid->column('local.title', __('Local'));
+        } else {
+        }
+
+        $grid->model()->where('local_id', $id);
+        
+        $grid->column('product.title', __('Producto'));
+        $grid->column('stock', __('Stock'));
+
+        $grid->disableActions();
+        $grid->actions(function ($actions) {
+            $actions->disableView();
+            $actions->disableEdit();
+            $actions->disableDelete();
+        });
+
+        return $grid;
+    }
+
 }

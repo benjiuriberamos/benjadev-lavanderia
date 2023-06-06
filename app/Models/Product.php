@@ -31,6 +31,12 @@ class Product extends Model
     protected $casts = [
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->setAttribute('stock', 0);
+    }
+
     /**
      * Get the provider that owns the product.
      */

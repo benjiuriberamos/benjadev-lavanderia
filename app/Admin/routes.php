@@ -21,10 +21,14 @@ Route::group([
     $router->resource('products', ProductController::class);
     $router->resource('providers', ProviderController::class);
     $router->resource('locals', LocalController::class);
+    $router->get('locals/{id}/products/', 'LocalController@products')->name('locals.products');
+    $router->get('stock/', 'LocalController@stockUser')->name('local.stocks');
+    // $router->put('stock/{id}/', 'LocalController@stockUpdate')->name('local.stocks.update');
+
     $router->resource('inputs', InputController::class);
     $router->resource('outputs', OutputController::class);
     $router->resource('subusers', SubuserController::class);
-    $router->get('reports', 'ReportController@index'::class);
-    $router->get('reports/inputs', 'ReportController@exportInputs'::class)->name('exports.inputs');
-    $router->get('reports/outputs', 'ReportController@exportOutputs'::class)->name('exports.outputs');
+    $router->get('reports', 'ReportController@index');
+    $router->get('reports/inputs', 'ReportController@exportInputs')->name('exports.inputs');
+    $router->get('reports/outputs', 'ReportController@exportOutputs')->name('exports.outputs');
 });

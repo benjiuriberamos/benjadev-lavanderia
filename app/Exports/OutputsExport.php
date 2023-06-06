@@ -48,11 +48,11 @@ class OutputsExport implements FromCollection
             });
         }
         if ($date_start) {
-            $query = $query->where('date_input', '>=', $date_start);
+            $query = $query->where('date_output', '>=', $date_start);
         }
 
         if ($date_end) {
-            $query = $query->where('date_input', '<=', $date_end);
+            $query = $query->where('date_output', '<=', $date_end);
         }
 
         $inputs = $query->get();
@@ -64,6 +64,7 @@ class OutputsExport implements FromCollection
             'Id de salida',
             'Fecha',
             'Producto',
+            'Cantidad',
             'Usuario',
             'Local',
         ];
@@ -75,6 +76,7 @@ class OutputsExport implements FromCollection
                     $row->id, //id de pedido
                     $row->date_output, //fecha de pedido
                     $detail['product']->title, //Nombre del producto
+                    $detail->quantity, //Nombre del usuario
                     $row['user']->name, //Nombre del usuario
                     $local, //Nombre del usuario
                 ];

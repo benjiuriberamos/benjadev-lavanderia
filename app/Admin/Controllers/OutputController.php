@@ -2,18 +2,25 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Controllers\Subcore\CompletePageController;
+use App\Models\Local;
 use App\Models\Output;
-use App\Models\Product;
-use Encore\Admin\Auth\Database\Administrator;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Product;
+use App\Traits\UtilsTrait;
+use App\Models\OutputDetail;
+use App\Models\LocalProducts;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
+use Encore\Admin\Auth\Database\Administrator;
+use App\Admin\Controllers\Subcore\CompletePageController;
 
-class OutputController extends CompletePageController {
+class OutputController extends CompletePageController
+{
+    use UtilsTrait;
+
 	/**
 	 * Title for current resource.
 	 *
@@ -102,44 +109,141 @@ class OutputController extends CompletePageController {
 	 * @return Form
 	 */
 	protected function form() {
-		$productos = DB::table('products')->select('id', 'title', 'stock')->get();
-		$productos = $productos->map(function ($e) {
-			return array(
-				'id' => $e->id,
-				'title' => $e->title . ' | STOCK[' . $e->stock . ']',
-			);
-		})->toArray();
-		$productos = array_column($productos, 'title', 'id');
+
+		if (Admin::user()->isRole('usuario-subalmacen')) {
+			return $this->formSubalmacen();
+		}
+
+		$productos = $this->productsForUser();
 
 		$form = new Form(new Output());
-		$form->date('date_output', __('Date'))->format('YYYY-MM-DD');
+		$form->date('date_output', __('Fecha'))
+			->format('YYYY-MM-DD')
+			->rules('required');
+		$form->select('user_id', __('Usuario'))->options(Administrator::whereHas('roles', function (Builder $query) {
+			$query->where('slug', 'usuario-subalmacen');
+		})->get()->pluck('name', 'id'))
+			->rules('required');
+		$form->hasMany('outputDetails', 'Productos', function ($form) use ($productos) {
+			$form->select('product_id', __('Producto'))->options($productos);
+			$form->number('quantity', 'Cantidad');
+		})->mode('table');
 
-		if (auth()->user()->isRole('administrator') ||
-			auth()->user()->isRole('usuario-administrador') ||
-			auth()->user()->isRole('usuario-almacen')) {
-			$form->select('user_id', __('Usuario'))->options(Administrator::whereDoesntHave('roles', function (Builder $query) {
-				$query->where('slug', 'administrator')
-					->orWhere('slug', 'usuario-administrador');
-			})->get()->pluck('name', 'id'));
-		}
+		$form->submitted(function (Form $form) {
+			$output = $form->model();
+
+			//Resta de subalmacen
+			$output->outputDetails()->get()->map(function ($model) use ($output) {
+				$stock = LocalProducts::firstOrCreate([
+					'product_id' => $model->product_id,
+					'local_id' => $output->local_id,
+				]);
+				$stock->stock = $stock->stock - $model->quantity;
+				$stock->save();
+			});
+		});
+
+		$form->saved(function (Form $form) {
+			$output = $form->model();
+			$user = Administrator::find($output->user_id);
+			$output->local_id = $this->getLocalByUser($user)->id;
+			$output->save();
+
+			//Suma a subalmacen
+			$output->outputDetails()->get()->map(function ($outputDetail) use ($output) {
+				$stock = LocalProducts::firstOrCreate([
+					'product_id' => $outputDetail->product_id,
+					'local_id' => $output->local_id,
+				]);
+				$stock->stock = $stock->stock + $outputDetail->quantity;
+				$stock->save();
+			});
+		});
+
+		return $form;
+	}
+
+	protected function formSubalmacen() {
+
+		$productos = $this->productsForUser();
+
+		$form = new Form(new Output());
+		$form->date('date_output', __('Fecha'))
+			->format('YYYY-MM-DD')
+			->rules('required');
+		$form->hidden('is_subalmacen')->value(true);
 
 		$form->hasMany('outputDetails', 'Productos', function ($form) use ($productos) {
 			$form->select('product_id', __('Producto'))->options($productos);
 			$form->number('quantity', 'Cantidad');
-			// $form->number('price', 'Precio');
+			$form->hidden('is_subalmacen')->value(true);
+
 		})->mode('table');
 
-		// dd(Product::all()->pluck('title', 'id'));
-
-		// dd($productos);
-		// exit;
-
-		if (!auth()->user()->isRole('administrator') || !auth()->user()->isRole('usuario-administrador')) {
-			$form->saving(function (Form $form) {
-				$form->model()->user_id = auth()->user()->id;
+		$form->submitted(function (Form $form) {
+			$output = $form->model();
+			
+			//Resta de subalmacen
+			$output->outputDetails()->get()->map(function ($outputDetail) use ($output) {
+				$stock = LocalProducts::firstOrCreate([
+					'product_id' => $outputDetail->product_id,
+					'local_id' => $output->local_id,
+				]);
+				$stock->stock = $stock->stock + $outputDetail->quantity;
+				$stock->save();
 			});
-		}
+		});
+
+		$form->saved(function (Form $form) {
+			$output = $form->model();
+			$output->user_id = auth()->user()->id;
+			$output->local_id = $this->getLocal()->id;
+			$output->is_subalmacen = true;
+			$output->save();
+
+			//Suma a subalmacen
+			$output->outputDetails()->get()->map(function ($outputDetail) use ($output) {
+				$stock = LocalProducts::firstOrCreate([
+					'product_id' => $outputDetail->product_id,
+					'local_id' => $output->local_id,
+				]);
+				$stock->stock = $stock->stock - $outputDetail->quantity;
+				$stock->save();
+			});
+		});
+
 
 		return $form;
+	}
+
+	private function productsForUser() {
+
+		if (Admin::user()->isRole('usuario-subalmacen')) {
+			$productos = LocalProducts::with('product')
+				->where('local_id', $this->getLocal()->id)
+				->get();
+			$productos = $productos->map(function ($e) {
+				$product = $e->product()->first();
+				return array(
+					'id' => $product->id,
+					'title' => $product->title . ' | STOCK[' . $e->stock . ']',
+				);
+			})->toArray();
+
+		} else {
+			$productos = DB::table('products')
+				->select('id', 'title', 'stock')
+				->get();
+			$productos = $productos->map(function ($e) {
+				return array(
+					'id' => $e->id,
+					'title' => $e->title . ' | STOCK[' . $e->stock . ']',
+				);
+			})->toArray();
+
+		}
+		
+		$productos = array_column($productos, 'title', 'id');
+		return $productos;
 	}
 }

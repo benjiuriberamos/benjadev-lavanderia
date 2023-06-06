@@ -72,6 +72,7 @@ class InputsExport implements FromCollection
             'Fecha',
             'Empresa',
             'Producto',
+            'Cantidad',
             'Usuario',
             'Local',
         ];
@@ -84,6 +85,7 @@ class InputsExport implements FromCollection
                     $row->date_input, //fecha de pedido
                     $row->factory, //Empresa
                     $detail['product']->title, //Nombre del producto
+                    $detail->quantity, //Nombre del usuario
                     $row['user']->name, //Nombre del usuario
                     $local , //Nombre del usuario
                 ];

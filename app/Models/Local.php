@@ -19,6 +19,7 @@ class Local extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'title',
         'slug',
     ];
@@ -30,9 +31,8 @@ class Local extends Model
     /**
      * Get the subuser that owns the phone.
      */
-    public function subuser()
+    public function subusers()
     {
         return $this->hasOne('App\Models\Subuser');
     }
-
 }

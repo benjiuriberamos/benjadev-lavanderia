@@ -12,6 +12,17 @@ class User extends Administrator
 {
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id',
+        'username',
+        'name',
+    ];
+
+    /**
      * Get the subuser that owns the phone.
      */
     public function subuser()

@@ -22,6 +22,8 @@ class Output extends Model
         'factory',
         'date_input',
         'user_id',
+        'local_id',
+        'is_subalmacen',
     ];
 
     // protected $casts = [

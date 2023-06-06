@@ -19,6 +19,7 @@ class Subuser extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'local_id',
         'user_id',
     ];

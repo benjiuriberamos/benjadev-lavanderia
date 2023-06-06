@@ -38,18 +38,12 @@ class ProductController extends CompletePageController
             });
         $grid->column('stock', __('Stock'))->filter('like');
         $grid->column('provider.title', __('Proveedor'));
-        
-
-        // $grid->column('created_at', __('Created at'));
-        // $grid->column('updated_at', __('Updated at'));
 
         //Settings
         $grid->filter(function ($filter) {
             $filter->between('created_at', 'Created Time')->datetime();
         });
 
-        
-        
         //Settings
         $grid->perPages([10, 20, 30, 40, 50]);
         $grid->actions(function ($actions) {
@@ -94,8 +88,7 @@ class ProductController extends CompletePageController
         $form->text('slug', __('Slug'))->help('Se autogenera con el título.');
         $form->textarea('description', __('Descripción'));
         $form->image('image', __('Imagen principal'))
-            ->removable()
-            ->help('Seleccione las imagenes. Tamaño recomendado 740x900.');
+            ->removable();
         $form->select('provider_id', __('Proveedor'))->options(Provider::all()->pluck('title', 'id'));
 
         $form->saving(function (Form $form) {

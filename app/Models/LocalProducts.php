@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OutputDetail extends Model
+class LocalProducts extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'output_detail';
+    protected $table = 'local_product';
 
     /**
      * The attributes that are mass assignable.
@@ -19,17 +19,15 @@ class OutputDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'quantity',
-        'price',
-        'input_id',
+        'stock',
         'product_id',
-        'is_subalmacen',
+        'local_id',
     ];
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->setAttribute('is_subalmacen', 0);
+        $this->setAttribute('stock', 0);
     }
 
     /**
@@ -41,10 +39,10 @@ class OutputDetail extends Model
     }
 
     /**
-     * Get the product associated with the detail.
+     * Get the local associated with the detail.
      */
-    public function output()
+    public function local()
     {
-        return $this->belongsTo('App\Models\Output');
+        return $this->belongsTo('App\Models\Local');
     }
 }
