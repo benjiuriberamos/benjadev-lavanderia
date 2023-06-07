@@ -21,6 +21,7 @@ Route::group([
     $router->resource('products', ProductController::class);
     $router->resource('providers', ProviderController::class);
     $router->resource('locals', LocalController::class);
+    $router->resource('stocklocals', StockLocalController::class);
     $router->get('locals/{id}/products/', 'LocalController@products')->name('locals.products');
     $router->get('stock/', 'LocalController@stockUser')->name('local.stocks');
     // $router->put('stock/{id}/', 'LocalController@stockUpdate')->name('local.stocks.update');

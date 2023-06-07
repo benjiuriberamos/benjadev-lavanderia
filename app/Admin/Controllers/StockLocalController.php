@@ -16,7 +16,7 @@ use Encore\Admin\Layout\Content;
 use Illuminate\Database\Eloquent\Builder;
 use App\Admin\Controllers\Subcore\CompletePageController;
 
-class LocalController extends CompletePageController
+class StockLocalController extends CompletePageController
 {
     use UtilsTrait;
     
@@ -38,11 +38,8 @@ class LocalController extends CompletePageController
 
         $grid->column('id', __('ID'))->sortable();
         $grid->column('title', __('Nombre'));
-        $grid->column('not_column', __('Stock productos'))->display(function () {
-            return '<a href="' . route('admin.locals.products', ['id' => $this->id]) . '" target="_blank">Ver stock de productos</a>';
-        });
-        $grid->column('not_column2', __('Ver salidas'))->display(function () {
-            return '<a href="' . route('admin.stocklocals.index', ['local' => $this->id]) . '" target="_blank">Ver salidas</a>';
+        $grid->column('not_column', __('Productos'))->display(function () {
+            return '<a href="' . route('admin.locals.products', ['id' => $this->id]) . '" target="_blank">Ver Productos</a>';
         });
 
         //Settings

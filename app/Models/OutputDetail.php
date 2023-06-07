@@ -21,7 +21,7 @@ class OutputDetail extends Model
     protected $fillable = [
         'quantity',
         'price',
-        'input_id',
+        'output_id',
         'product_id',
         'is_subalmacen',
     ];

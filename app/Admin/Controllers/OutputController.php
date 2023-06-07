@@ -39,6 +39,13 @@ class OutputController extends CompletePageController
 		if (Admin::user()->isRole('usuario-subalmacen')) {
 			$user_id = Admin::user()->id;
 			$grid->model()->where('user_id', $user_id);
+			$grid->model()->where('is_subalmacen', 1);
+		} else {
+			$grid->model()->where('is_subalmacen', 0);
+
+			$grid->column('user.subuser', __('Hacia el local'))->display(function ($array) {
+				return isset($array['local']['title']) ? $array['local']['title'] : '';
+			});
 		}
 
 		$grid->model()->with('user');
@@ -47,8 +54,8 @@ class OutputController extends CompletePageController
 		$grid->column('id', __('ID'))->sortable();
 		$grid->column('date_output', __('Fecha'));
 		$grid->column('user.name', __('Usuario'));
-		$grid->column('user.subuser', __('Local'))->display(function ($array) {
-			return isset($array['local']['title']) ? $array['local']['title'] : '';
+		$grid->column('is_subalmacen', __('Retiro de'))->display(function ($value) {
+			return $value ? 'Subalmacen' : 'Principal' ;
 		});
 
 		if (Admin::user()->isRole('usuario-almacen') || Admin::user()->isRole('usuario-subalmacen')) {
@@ -166,24 +173,30 @@ class OutputController extends CompletePageController
 	protected function formSubalmacen() {
 
 		$productos = $this->productsForUser();
+		$user_id = auth()->user()->id;
+		$local_id = $this->getLocal()->id;
 
 		$form = new Form(new Output());
 		$form->date('date_output', __('Fecha'))
 			->format('YYYY-MM-DD')
 			->rules('required');
-		$form->hidden('is_subalmacen')->value(true);
+		$form->hidden('is_subalmacen')->value(1);
+		$form->hidden('user_id')->value($user_id);
+		$form->hidden('local_id')->value($local_id);
 
+		// dd($params);exit;
 		$form->hasMany('outputDetails', 'Productos', function ($form) use ($productos) {
 			$form->select('product_id', __('Producto'))->options($productos);
 			$form->number('quantity', 'Cantidad');
-			$form->hidden('is_subalmacen')->value(true);
+			$form->hidden('is_subalmacen')->value(1);
 
 		})->mode('table');
-
+		
 		$form->submitted(function (Form $form) {
 			$output = $form->model();
 			
-			//Resta de subalmacen
+			
+			//Suma de subalmacen
 			$output->outputDetails()->get()->map(function ($outputDetail) use ($output) {
 				$stock = LocalProducts::firstOrCreate([
 					'product_id' => $outputDetail->product_id,
@@ -192,16 +205,14 @@ class OutputController extends CompletePageController
 				$stock->stock = $stock->stock + $outputDetail->quantity;
 				$stock->save();
 			});
+
+
 		});
 
 		$form->saved(function (Form $form) {
 			$output = $form->model();
-			$output->user_id = auth()->user()->id;
-			$output->local_id = $this->getLocal()->id;
-			$output->is_subalmacen = true;
-			$output->save();
 
-			//Suma a subalmacen
+			//Resta a subalmacen
 			$output->outputDetails()->get()->map(function ($outputDetail) use ($output) {
 				$stock = LocalProducts::firstOrCreate([
 					'product_id' => $outputDetail->product_id,
@@ -211,7 +222,6 @@ class OutputController extends CompletePageController
 				$stock->save();
 			});
 		});
-
 
 		return $form;
 	}
