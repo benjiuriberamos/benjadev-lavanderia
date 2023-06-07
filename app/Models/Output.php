@@ -45,4 +45,12 @@ class Output extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    /**
+     * Get the local associated with the detail.
+     */
+    public function local()
+    {
+        return $this->belongsTo('App\Local');
+    }
 }

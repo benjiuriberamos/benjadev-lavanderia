@@ -58,11 +58,10 @@ class OutputController extends CompletePageController
 			return $value ? 'Subalmacen' : 'Principal' ;
 		});
 
-		if (Admin::user()->isRole('usuario-almacen') || Admin::user()->isRole('usuario-subalmacen')) {
+		if (Admin::user()->isRole('usuario-subalmacen')) {
             $grid->actions(function ($actions) {
                 $actions->disableView(false);
                 $actions->disableEdit();
-                $actions->disableDelete();
             });
         }
 
@@ -226,34 +225,5 @@ class OutputController extends CompletePageController
 		return $form;
 	}
 
-	private function productsForUser() {
-
-		if (Admin::user()->isRole('usuario-subalmacen')) {
-			$productos = LocalProducts::with('product')
-				->where('local_id', $this->getLocal()->id)
-				->get();
-			$productos = $productos->map(function ($e) {
-				$product = $e->product()->first();
-				return array(
-					'id' => $product->id,
-					'title' => $product->title . ' | STOCK[' . $e->stock . ']',
-				);
-			})->toArray();
-
-		} else {
-			$productos = DB::table('products')
-				->select('id', 'title', 'stock')
-				->get();
-			$productos = $productos->map(function ($e) {
-				return array(
-					'id' => $e->id,
-					'title' => $e->title . ' | STOCK[' . $e->stock . ']',
-				);
-			})->toArray();
-
-		}
-		
-		$productos = array_column($productos, 'title', 'id');
-		return $productos;
-	}
+	
 }
