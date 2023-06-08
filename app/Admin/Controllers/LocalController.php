@@ -128,6 +128,7 @@ class LocalController extends CompletePageController
         $grid->column('product.title', __('Producto'));
         $grid->column('stock', __('Stock'));
 
+		$grid->disableCreateButton();
         $grid->disableActions();
         $grid->actions(function ($actions) {
             $actions->disableView();

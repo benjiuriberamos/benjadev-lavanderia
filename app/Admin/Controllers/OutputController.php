@@ -40,6 +40,7 @@ class OutputController extends CompletePageController
 			$user_id = Admin::user()->id;
 			$grid->model()->where('user_id', $user_id);
 			$grid->model()->where('is_subalmacen', 1);
+
 		} else {
 			$grid->model()->where('is_subalmacen', 0);
 
@@ -131,8 +132,11 @@ class OutputController extends CompletePageController
 		})->get()->pluck('name', 'id'))
 			->rules('required');
 		$form->hasMany('outputDetails', 'Productos', function ($form) use ($productos) {
-			$form->select('product_id', __('Producto'))->options($productos);
-			$form->number('quantity', 'Cantidad');
+			$form->select('product_id', __('Producto'))
+				->options($productos)
+				->rules('required');
+			$form->number('quantity', 'Cantidad')
+				->rules('required');
 		})->mode('table');
 
 		$form->submitted(function (Form $form) {
@@ -185,8 +189,11 @@ class OutputController extends CompletePageController
 
 		// dd($params);exit;
 		$form->hasMany('outputDetails', 'Productos', function ($form) use ($productos) {
-			$form->select('product_id', __('Producto'))->options($productos);
-			$form->number('quantity', 'Cantidad');
+			$form->select('product_id', __('Producto'))
+				->options($productos)
+				->rules('required');
+			$form->number('quantity', 'Cantidad')
+				->rules('required');
 			$form->hidden('is_subalmacen')->value(1);
 
 		})->mode('table');

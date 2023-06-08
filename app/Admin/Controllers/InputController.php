@@ -95,8 +95,11 @@ class InputController extends CompletePageController
         $form->date('date_input', __('Date'))->format('YYYY-MM-DD');
         $form->text('factory', __('Empresa'))->rules('required');
         $form->hasMany('inputDetails', 'Productos', function ($form) {
-            $form->select('product_id', __('Producto'))->options(Product::all()->pluck('title', 'id'));
-            $form->number('quantity', 'Cantidad');
+            $form->select('product_id', __('Producto'))
+                ->options(Product::all()->pluck('title', 'id'))
+                ->rules('required');
+            $form->number('quantity', 'Cantidad')
+                ->rules('required');;
             //$form->number('price', 'Precio');
         })->mode('table');
 
